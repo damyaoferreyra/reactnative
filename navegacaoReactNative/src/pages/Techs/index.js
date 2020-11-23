@@ -53,7 +53,15 @@ export default function Techs() {
   return (
     <Container>
       <Form>
-        <Input autoCorrect={false} autoCapitalize="none" placeholder="Adicionar tecnologia" value={newTech} onChangeText={setNewTech} returnKeyType="send" onSubmitEditing={()=> {} }/>
+        <Input
+          autoCorrect={false}
+          autoCapitalize="none"
+          placeholder="Adicionar tecnologia"
+          value={newTech}
+          onChangeText={setNewTech}
+          returnKeyType="send"
+          onSubmitEditing={() => handleAddTech}
+        />
         <SubmitButton loading={loading} onPress={handleAddTech}>
           {loading ? (
             <ActivityIndicator color="#fff" />
