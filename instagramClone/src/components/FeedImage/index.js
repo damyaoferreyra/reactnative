@@ -49,10 +49,10 @@ export default function FeedImage({
 
 FeedImage.propTypes = {
   smallSource: PropTypes.shape({
-    uri: PropTypes.string,
+    uri: PropTypes.string.isRequired,
   }).isRequired,
   source: PropTypes.shape({
-    uri: PropTypes.string,
+    uri: PropTypes.string.isRequired,
   }).isRequired,
   shouldLoad: PropTypes.bool,
   aspectRatio: PropTypes.number,
