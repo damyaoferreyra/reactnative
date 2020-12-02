@@ -48,8 +48,12 @@ export default function FeedImage({
 }
 
 FeedImage.propTypes = {
-  smallSource: PropTypes.object.isRequired,
-  source: PropTypes.object.isRequired,
+  smallSource: PropTypes.shape({
+    uri: PropTypes.string,
+  }).isRequired,
+  source: PropTypes.shape({
+    uri: PropTypes.string,
+  }).isRequired,
   shouldLoad: PropTypes.bool,
   aspectRatio: PropTypes.number,
 };
