@@ -1,6 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { View } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import EmptyCart from '../../components/EmptyCart';
+import * as CartActions from '../../store/modules/cart/actions';
 
 import {
   ActionButton,
@@ -23,38 +26,36 @@ import {
 } from './styles';
 
 import formatValue from '../../utils/formatValue';
+import { EmptyCartText } from '../../components/EmptyCart/styles';
 
 export default function Cart() {
-  const [products, setProducts] = useState([
-    {
-      id: '1',
-      title: 'Assinatura trimestral',
-      image_url:
-        'https://res.cloudinary.com/robertosousa1/image/upload/v1594492578/dio/quarterly_subscription_yjolpc.png',
-      quantity: 2,
-      price: 75,
-    },
-    {
-      id: '2',
-      title: 'Assinatura anual',
-      image_url:
-        'https://res.cloudinary.com/robertosousa1/image/upload/v1594492578/dio/quarterly_subscription_yjolpc.png',
-      quantity: 1,
-      price: 200,
-    },
-  ]);
+  const dispatch = useDispatch();
+  const products = useSelector(({ cart }) => cart);
 
   const cartSize = useMemo(() => {
+    console.log(products);
     return products.length || 0;
   }, [products]);
 
   const cartTotal = useMemo(() => {
     const cartAmount = products.reduce((accumulator, product) => {
-      const totalPrice = accumulator + product.price * product.quantity;
+      const totalPrice = accumulator + product.amount * product.price;
       return totalPrice;
     }, 0);
     return formatValue(cartAmount);
   }, [products]);
+
+  function increment(product) {
+    dispatch(CartActions.updateAmountRequest(product.id, product.amount + 1));
+  }
+
+  function decrement(product) {
+    dispatch(CartActions.updateAmountRequest(product.id, product.amount - 1));
+  }
+
+  function removeFromCart(id) {
+    dispatch(CartActions.removeFromCart(id));
+  }
 
   return (
     <Container>
@@ -62,6 +63,7 @@ export default function Cart() {
         <ProductList
           data={products}
           keyExtractor={(item) => item.id}
+          ListEmptyComponent={<EmptyCart />}
           ListFooterComponent={<View />}
           ListFooterComponentStyle={{
             height: 80,
@@ -76,18 +78,26 @@ export default function Cart() {
                     {formatValue(item.price)}
                   </ProductSinglePrice>
                   <TotalContainer>
-                    <ProductQuantity>{`${item.quantity} x`}</ProductQuantity>
+                    <ProductQuantity>{`${item.amount} x`}</ProductQuantity>
                     <ProductPrice>
-                      {formatValue(item.price * item.quantity)}
+                      {formatValue(item.price * item.amount)}
                     </ProductPrice>
                   </TotalContainer>
                 </ProductPriceContainer>
               </ProductTitleContainer>
               <ActionContainer>
-                <ActionButton onPress={() => {}}>
+                <ActionButton
+                  onPress={() => {
+                    increment(item);
+                  }}
+                >
                   <FeatherIcon name="plus" color="#e83F58" size={16} />
                 </ActionButton>
-                <ActionButton onPress={() => {}}>
+                <ActionButton
+                  onPress={() => {
+                    item.amount > 1 ? decrement(item) : removeFromCart(item.id);
+                  }}
+                >
                   <FeatherIcon name="minus" color="#e83F58" size={16} />
                 </ActionButton>
               </ActionContainer>
